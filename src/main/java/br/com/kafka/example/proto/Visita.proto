@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+message Visita {
+	string data = 1;
+	string horario = 2;
+	Usuario usuario = 3;
+
+	message Usuario {
+		string cpf = 1;
+		string nome = 2;
+		string email = 3;
+	}
+
+}
