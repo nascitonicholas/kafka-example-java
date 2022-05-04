@@ -4,11 +4,11 @@ import br.com.kafka.example.producer.application.core.domain.Visita;
 import br.com.kafka.example.producer.application.ports.in.AgendarVisitaServicePort;
 import br.com.kafka.example.producer.application.ports.out.VisitaPortOut;
 
-public class AgendarVisitaService implements AgendarVisitaServicePort {
+public class AgendarVisitaProducerService implements AgendarVisitaServicePort {
 
     private final VisitaPortOut agendarVisitaPort;
 
-    public AgendarVisitaService(VisitaPortOut agendarVisitaPort) {
+    public AgendarVisitaProducerService(VisitaPortOut agendarVisitaPort) {
         this.agendarVisitaPort = agendarVisitaPort;
     }
 

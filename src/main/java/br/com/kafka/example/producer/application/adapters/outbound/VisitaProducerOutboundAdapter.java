@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
 
 @Component
-public class VisitaAdapter implements VisitaPortOut {
+public class VisitaProducerOutboundAdapter implements VisitaPortOut {
 
     private KafkaProducerConfig config;
     private VisitaMapper mapper = Mappers.getMapper(VisitaMapper.class);
