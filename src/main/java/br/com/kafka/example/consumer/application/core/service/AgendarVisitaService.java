@@ -2,20 +2,27 @@ package br.com.kafka.example.consumer.application.core.service;
 
 import br.com.kafka.example.consumer.application.core.domain.Visita;
 import br.com.kafka.example.consumer.application.ports.in.AgendarVisitaServicePort;
-import br.com.kafka.example.consumer.application.ports.out.AgendarVisitaPort;
+import br.com.kafka.example.consumer.application.ports.out.VisitaPortOut;
 
 public class AgendarVisitaService implements AgendarVisitaServicePort {
 
-    private final AgendarVisitaPort agendarVisitaPort;
+    private final VisitaPortOut agendarVisitaPort;
 
-    public AgendarVisitaService(AgendarVisitaPort agendarVisitaPort) {
+    public AgendarVisitaService(VisitaPortOut agendarVisitaPort) {
         this.agendarVisitaPort = agendarVisitaPort;
     }
 
-//    Aqui deve ser aplicada as regras de negócio (ex: validar se a data e hora da visita estão disponiveis)
-//    no caso, desejo apenas salvar no banco
     @Override
     public Visita agendarVisita(Visita visita) {
-        return agendarVisitaPort.agendarVisita(visita);
+        try {
+            Visita horarioDisponivel = agendarVisitaPort.getVisitaPorData(visita.getData());
+            if(horarioDisponivel.getId() == null) {
+                return agendarVisitaPort.agendarVisita(visita);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new Visita();
     }
+
 }
