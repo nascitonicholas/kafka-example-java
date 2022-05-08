@@ -5,9 +5,11 @@ import br.com.kafka.example.producer.application.core.domain.Visita;
 import br.com.kafka.example.producer.application.ports.out.VisitaPortOut;
 import br.com.kafka.example.producer.config.KafkaProducerConfig;
 import br.com.kafka.example.protobuf.VisitaProto;
-import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -15,8 +17,15 @@ import javax.transaction.Transactional;
 @Component
 public class VisitaProducerOutboundAdapter implements VisitaPortOut {
 
-    private KafkaProducerConfig config;
-    private VisitaMapper mapper = Mappers.getMapper(VisitaMapper.class);
+    private String topic;
+    private final KafkaTemplate<String, VisitaProto.VisitaProtoMessage> kafkaTemplate;
+    private final VisitaMapper mapper = Mappers.getMapper(VisitaMapper.class);
+
+    public VisitaProducerOutboundAdapter(@Value("${topic.name}") String topic,
+                                         KafkaTemplate<String, VisitaProto.VisitaProtoMessage> kafkaTemplate) {
+        this.topic = topic;
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     @Override
     @Transactional
@@ -32,11 +41,11 @@ public class VisitaProducerOutboundAdapter implements VisitaPortOut {
                     .setHorario(visita.getHorario())
                     .setUsuario(usuario)
                     .build();
-            Producer<String, VisitaProto.VisitaProtoMessage> producer = config.VisitasProducerFactory();
-            ProducerRecord<String, VisitaProto.VisitaProtoMessage> record = new ProducerRecord<>(config.createTopic().toString(), null, visitaMessage);
-            producer.send(record);
+
+            KafkaProducer<String, VisitaProto.VisitaProtoMessage> producer = KafkaProducerConfig.kafkaProducer();
+            producer.send(new ProducerRecord<String, VisitaProto.VisitaProtoMessage>(topic, "Credit Card", visitaMessage));
             return visita;
-        } catch (Exception e) {
+         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new Visita();
         }

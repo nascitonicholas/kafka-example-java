@@ -1,17 +1,17 @@
 package br.com.kafka.example.producer.config;
 
 import br.com.kafka.example.protobuf.VisitaProto;
-import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializerConfig;
+import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Properties;
 
+@Configuration
 public class KafkaProducerConfig {
 
     @Value(value = "${topic.name}")
@@ -28,14 +28,18 @@ public class KafkaProducerConfig {
         return new NewTopic(topic, 3, (short) 1);
     }
 
-    @Bean
-    public KafkaProducer<String, VisitaProto.VisitaProtoMessage> VisitasProducerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaAdress);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaProtobufSerializerConfig.class);
-        configProps.put(KafkaProtobufSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaAdress);
-        return new KafkaProducer<>(configProps);
+    public static Properties visitasProducerProperties() {
+        Properties properties = new Properties();
+        properties.setProperty("bootstrap.servers", "http://localhost:9092");
+        properties.setProperty("schema.registry.url", "http://localhost:8081");
+        properties.setProperty("key.serializer", StringSerializer.class.getName());
+        properties.setProperty("value.serializer", KafkaProtobufSerializer.class.getName());
+        return properties;
     }
+
+    public static KafkaProducer<String, VisitaProto.VisitaProtoMessage> kafkaProducer() {
+        return new KafkaProducer<String, VisitaProto.VisitaProtoMessage>(visitasProducerProperties());
+    }
+
 
 }
