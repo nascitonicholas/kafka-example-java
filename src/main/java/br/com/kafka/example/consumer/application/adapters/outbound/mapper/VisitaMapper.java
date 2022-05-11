@@ -7,7 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper
 public interface VisitaMapper {
 
-    //Visita mapToVisita(Visit visita);
     Visita mapToVisita(VisitaEntity visita);
     VisitaEntity mapToVisitaEntity(Visita visita);
 }

@@ -42,8 +42,7 @@ public class VisitaProducerOutboundAdapter implements VisitaPortOut {
                     .setUsuario(usuario)
                     .build();
 
-            KafkaProducer<String, VisitaProto.VisitaProtoMessage> producer = KafkaProducerConfig.kafkaProducer();
-            producer.send(new ProducerRecord<String, VisitaProto.VisitaProtoMessage>(topic, "Credit Card", visitaMessage));
+            kafkaTemplate.send(new ProducerRecord<String, VisitaProto.VisitaProtoMessage>(topic, "Credit Card", visitaMessage));
             return visita;
          } catch (Exception e) {
             System.out.println(e.getMessage());

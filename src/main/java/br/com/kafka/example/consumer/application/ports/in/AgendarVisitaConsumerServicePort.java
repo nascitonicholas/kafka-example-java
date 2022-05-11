@@ -2,8 +2,8 @@ package br.com.kafka.example.consumer.application.ports.in;
 
 import br.com.kafka.example.consumer.application.core.domain.Visita;
 
-public interface AgendarVisitaServicePort {
+public interface AgendarVisitaConsumerServicePort {
 
-    Visita agendarVisita(Visita visita);
+    Visita agendarVisitaConsumer(Visita visita);
 
 }
